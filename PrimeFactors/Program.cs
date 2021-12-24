@@ -72,26 +72,37 @@ namespace PrimeFactors
 			//	}
 			//}
 			// 2s
-			for (int pow = 1; pow < Math.Log(100, 2); pow++)
+			for (var pow = 1; pow < Math.Log(100, 2); pow++)
 			{
+				// fact - 1 loops
 				for (var n = (int)Math.Pow(2, pow); n < 100; n += (int)Math.Pow(2, pow + 1))
 				{
 					primeDictFast[n].Add(2, pow);
 				}
 			}
 			// 3s
-			for (int pow = 1; pow < Math.Log(100, 3); pow++)
+			for (var pow = 1; pow < Math.Log(100, 3); pow++)
 			{
-				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, 1); n < 100; n += (int)Math.Pow(3, pow + 1))
+				// fact - 1 loops
+				for (var n = (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
+				{
+					primeDictFast[n].Add(3, pow);
+				}
+				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
 				{
 					primeDictFast[n].Add(3, pow);
 				}
 			}
-			for (int pow = 1; pow < Math.Log(100, 3); pow++)
+			// 5s
+			for (var pow = 1; pow < Math.Log(100, 5); pow++)
 			{
-				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, 2); n < 100; n += (int)Math.Pow(3, pow + 1))
+				// fact - 1 loops
+				for (var l = 0; l < 5 - 1; l++)
 				{
-					primeDictFast[n].Add(3, pow);
+					for (var n = (int)Math.Pow(5, pow) + l * (int)Math.Pow(5, pow); n < 100; n += (int)Math.Pow(5, pow + 1))
+					{
+						primeDictFast[n].Add(5, pow);
+					}
 				}
 			}
 			for (var n = 2; n < 100; n++)
