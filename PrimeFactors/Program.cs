@@ -61,27 +61,37 @@ namespace PrimeFactors
 			{
 				primeDictFast.Add(n, new Dictionary<int, int>());
 			}
-			//for (var n = 2; n < 100; n += 4)
+			//for (int prime = 2; prime < 100; prime++)
 			//{
-			//	primeDictFast[n].Add(2, 1);
+			//	for (int pow = 1; pow < Math.Log(100, prime); pow++)
+			//	{
+			//		for (var n = (int)Math.Pow(prime, pow); n < 100; n += (int)Math.Pow(prime, pow + 1))
+			//		{
+			//			primeDictFast[n].Add(prime, pow);
+			//		}
+			//	}
 			//}
-			//for (var n = 4; n < 100; n += 8)
-			//{
-			//	primeDictFast[n].Add(2, 2);
-			//}
-			//for (var n = 8; n < 100; n += 16)
-			//{
-			//	primeDictFast[n].Add(2, 3);
-
-			//for (var n = 16; n < 100; n += 32)
-			//{
-			//	primeDictFast[n].Add(2, 3);
-			//}
-			for (int p = 1; p < Math.Log(100, 2); p++)
+			// 2s
+			for (int pow = 1; pow < Math.Log(100, 2); pow++)
 			{
-				for (var n = (int)Math.Pow(2, p); n < 100; n += (int)Math.Pow(2, p + 1))
+				for (var n = (int)Math.Pow(2, pow); n < 100; n += (int)Math.Pow(2, pow + 1))
 				{
-					primeDictFast[n].Add(2, p);
+					primeDictFast[n].Add(2, pow);
+				}
+			}
+			// 3s
+			for (int pow = 1; pow < Math.Log(100, 3); pow++)
+			{
+				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, 1); n < 100; n += (int)Math.Pow(3, pow + 1))
+				{
+					primeDictFast[n].Add(3, pow);
+				}
+			}
+			for (int pow = 1; pow < Math.Log(100, 3); pow++)
+			{
+				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, 2); n < 100; n += (int)Math.Pow(3, pow + 1))
+				{
+					primeDictFast[n].Add(3, pow);
 				}
 			}
 			for (var n = 2; n < 100; n++)
