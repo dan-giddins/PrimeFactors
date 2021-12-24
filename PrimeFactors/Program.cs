@@ -71,37 +71,58 @@ namespace PrimeFactors
 			//		}
 			//	}
 			//}
-			// 2s
-			for (var pow = 1; pow < Math.Log(100, 2); pow++)
+			//// 2s
+			//for (var pow = 1; pow < Math.Log(100, 2); pow++)
+			//{
+			//	// fact - 1 loops
+			//	for (var n = (int)Math.Pow(2, pow); n < 100; n += (int)Math.Pow(2, pow + 1))
+			//	{
+			//		primeDictFast[n].Add(2, pow);
+			//	}
+			//}
+			//// 3s
+			//for (var pow = 1; pow < Math.Log(100, 3); pow++)
+			//{
+			//	// fact - 1 loops
+			//	for (var n = (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
+			//	{
+			//		primeDictFast[n].Add(3, pow);
+			//	}
+			//	for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
+			//	{
+			//		primeDictFast[n].Add(3, pow);
+			//	}
+			//}
+			//// 5s
+			//for (var pow = 1; pow < Math.Log(100, 5); pow++)
+			//{
+			//	// fact - 1 loops
+			//	for (var l = 0; l < 5 - 1; l++)
+			//	{
+			//		for (var n = (int)Math.Pow(5, pow) + l * (int)Math.Pow(5, pow); n < 100; n += (int)Math.Pow(5, pow + 1))
+			//		{
+			//			primeDictFast[n].Add(5, pow);
+			//		}
+			//	}
+			//}
+			// loop through potential primes
+			for (var potPrime = 2; potPrime < 100; potPrime++)
 			{
-				// fact - 1 loops
-				for (var n = (int)Math.Pow(2, pow); n < 100; n += (int)Math.Pow(2, pow + 1))
-				{
-					primeDictFast[n].Add(2, pow);
-				}
-			}
-			// 3s
-			for (var pow = 1; pow < Math.Log(100, 3); pow++)
-			{
-				// fact - 1 loops
-				for (var n = (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
-				{
-					primeDictFast[n].Add(3, pow);
-				}
-				for (var n = (int)Math.Pow(3, pow) + (int)Math.Pow(3, pow); n < 100; n += (int)Math.Pow(3, pow + 1))
-				{
-					primeDictFast[n].Add(3, pow);
-				}
-			}
-			// 5s
-			for (var pow = 1; pow < Math.Log(100, 5); pow++)
-			{
-				// fact - 1 loops
-				for (var l = 0; l < 5 - 1; l++)
-				{
-					for (var n = (int)Math.Pow(5, pow) + l * (int)Math.Pow(5, pow); n < 100; n += (int)Math.Pow(5, pow + 1))
+				// loop through the possible powers for said potPrime
+				for (var pow = 1; pow < Math.Log(100, potPrime); pow++)
+				{ 
+					// how many extra
+					for (var loop = 0; loop < potPrime - 1; loop++)
 					{
-						primeDictFast[n].Add(5, pow);
+						for (
+							var n = (int)Math.Pow(potPrime, pow) + loop * (int)Math.Pow(potPrime, pow);
+							n < 100;
+							n += (int)Math.Pow(potPrime, pow + 1))
+						{
+							// is prime?
+							if (primeDictFast[2].Aggregate(1, (acc, val) => acc * val))
+							primeDictFast[n].Add(potPrime, pow);
+						}
 					}
 				}
 			}
