@@ -30,7 +30,12 @@ namespace PrimeFactors
 				primeFactors.Add(m);
 				primeDict.Add(n, primeFactors.GroupBy(x => x)
 					.Select(x => new KeyValuePair<int, int>(x.Key, x.Count())));
-				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
+				//Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
+			}
+			var pow2count = primeDict.SelectMany(x => x.Value.Where(x => x.Key == 2).Select(x => x.Value));
+			foreach (var item in pow2count)
+			{
+				Console.Write($"{item} ");
 			}
 		}
 	}
