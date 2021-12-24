@@ -9,7 +9,7 @@ namespace PrimeFactors
 		static void Main()
 		{
 			// number, prime, power
-			var primeDictProc = new Dictionary<int, IEnumerable<KeyValuePair<int, int>>>();
+			var primeDictProc = new Dictionary<int, Dictionary<int, int>>();
 			for (var n = 2; n < 100; n++)
 			{
 				var primeFactors = new List<int>();
@@ -29,8 +29,9 @@ namespace PrimeFactors
 				}
 				primeFactors.Add(m);
 				primeDictProc.Add(n, primeFactors.GroupBy(x => x)
-					.Select(x => new KeyValuePair<int, int>(x.Key, x.Count())));
-				//Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
+					.Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+					.ToDictionary(x => x.Key, x => x.Value));
+				//Console.WriteLine($"{n} = {string.Join(" * ", primeDictProc[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
 			//var pow2Count = primeDict.SelectMany(x => x.Value.Where(x => x.Key == 2).Select(x => x.Value));
 			//foreach (var item in pow2Count)
@@ -55,28 +56,37 @@ namespace PrimeFactors
 			//}
 			//Console.WriteLine();
 			// number, prime, power
-			var primeDictFast = new Dictionary<int, IEnumerable<KeyValuePair<int, int>>>();
+			var primeDictFast = new Dictionary<int, Dictionary<int, int>>();
 			for (var n = 2; n < 100; n++)
 			{
-				var primeFactors = new List<int>();
-				var p = 2;
-				var m = n;
-				while (m >= p * p)
+				primeDictFast.Add(n, new Dictionary<int, int>());
+			}
+			//for (var n = 2; n < 100; n += 4)
+			//{
+			//	primeDictFast[n].Add(2, 1);
+			//}
+			//for (var n = 4; n < 100; n += 8)
+			//{
+			//	primeDictFast[n].Add(2, 2);
+			//}
+			//for (var n = 8; n < 100; n += 16)
+			//{
+			//	primeDictFast[n].Add(2, 3);
+
+			//for (var n = 16; n < 100; n += 32)
+			//{
+			//	primeDictFast[n].Add(2, 3);
+			//}
+			for (int p = 1; p < Math.Log(100, 2); p++)
+			{
+				for (var n = (int)Math.Pow(2, p); n < 100; n += (int)Math.Pow(2, p + 1))
 				{
-					if (m % p == 0)
-					{
-						primeFactors.Add(p);
-						m /= p;
-					}
-					else
-					{
-						p++;
-					}
+					primeDictFast[n].Add(2, p);
 				}
-				primeFactors.Add(m);
-				primeDictProc.Add(n, primeFactors.GroupBy(x => x)
-					.Select(x => new KeyValuePair<int, int>(x.Key, x.Count())));
-				//Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
+			}
+			for (var n = 2; n < 100; n++)
+			{
+				Console.WriteLine($"{n} = {string.Join(" * ", primeDictFast[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
 		}
 	}
