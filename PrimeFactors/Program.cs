@@ -48,7 +48,7 @@ namespace PrimeFactors
 					.ToDictionary(x => x.Key, x => x.Value));
 			}
 			Watch.Stop();
-			//PrintPrimeDict(primeDictCurrent);
+			PrintPrimeDict(primeDictCurrent);
 			Console.WriteLine($"For a range of {Range}:");
 			var timeCurrent = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The current method took {timeCurrent} ms");
@@ -64,48 +64,36 @@ namespace PrimeFactors
 			// loop through potential bases (all numbers > 1)
 			for (var potBase = 2; potBase < Range; potBase++)
 			{
-				// assume base is prime
-				var isPrime = true;
+				if (primeDictNew[potBase].Any())
+				{
+					// if the numeric value of potBase already has factors
+					// potBase cannot be prime
+					// all primes have only one prime factor of themself
+					// as potBase is not prime, it cannot be a base
+					continue;
+				}
 				// loop through the possible powers for said potBase
-				for (var pow = 1; isPrime && IntPower(potBase, pow) < Range; pow++)
+				for (var pow = 1; IntPower(potBase, pow) < Range; pow++)
 				{
 					// sequence extender thingy (based on potBase)
 					// this is some kind of dark magic that I do not understand
-					for (var extender = 0; isPrime && extender < potBase - 1; extender++)
+					for (var extender = 0; extender < potBase - 1; extender++)
 					{
 						// sequence for this potBase and power
 						// how and why is `+ extender * Power(potBase, pow)` needed here?!
 						for (
 							var n = IntPower(potBase, pow) + extender * IntPower(potBase, pow);
-							isPrime && n < Range;
+							n < Range;
 							n += IntPower(potBase, pow + 1))
 						{
-							// check if potBase is actully not prime
-							var currentPrimePowersProduct = primeDictNew[n].Aggregate(
-								1, (long acc, KeyValuePair<long, long> val) =>
-									acc * IntPower(val.Key, val.Value));
-							if (currentPrimePowersProduct == n)
-							{
-								// the current prime product is already finished for this number
-								// therefor current base cannot be part of this prime product
-								// therefor current base also cannot be prime itself
-								// set isPrime to false to exit out all loops and move to the next potential base
-								// (by the time we get to testing a non-prime number
-								// all the factors of that number should have already been discovered
-								// so this will exit on the first time seeing this non-prime)
-								isPrime = false;
-							}
-							else
-							{
-								// currentPrimePowersProduct < n
-								primeDictNew[n].Add(potBase, pow);
-							}
+							// currentPrimePowersProduct < n
+							primeDictNew[n].Add(potBase, pow);
 						}
 					}
 				}
 			}
 			Watch.Stop();
-			PrintPrimeDict(primeDictNew);
+			//PrintPrimeDict(primeDictNew);
 			var timeNew = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The new method took {timeNew} ms");
 
