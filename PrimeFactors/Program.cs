@@ -42,6 +42,7 @@ namespace PrimeFactors
 					}
 				}
 				primeFactors.Add(m);
+				// group, count and project the list of primes for this into a dictory of <key = base, power>
 				primeDictCurrent.Add(n, primeFactors.GroupBy(x => x)
 					.Select(x => new KeyValuePair<long, long>(x.Key, x.Count()))
 					.ToDictionary(x => x.Key, x => x.Value));
@@ -66,24 +67,23 @@ namespace PrimeFactors
 				// assume number is prime
 				var isPrime = true;
 				// loop through the possible powers for said potPrime
-				for (var pow = 1; isPrime && Power(potPrime, pow) < Range; pow++)
+				for (var pow = 1; isPrime && IntPower(potPrime, pow) < Range; pow++)
 				{
 					// sequence extender thingy (based on potPrime)
 					// this is some kind of dark magic that I do not understand
-					// it does work though (just like dark magic)
 					for (var extender = 0; isPrime && extender < potPrime - 1; extender++)
 					{
 						// sequence for this potPrime and power
 						// how and why is `+ extender * Power(potPrime, pow)` needed here?!
 						for (
-							var n = Power(potPrime, pow) + extender * Power(potPrime, pow);
+							var n = IntPower(potPrime, pow) + extender * IntPower(potPrime, pow);
 							isPrime && n < Range;
-							n += Power(potPrime, pow + 1))
+							n += IntPower(potPrime, pow + 1))
 						{
 							// check if potPrime is actully not prime
 							var currentPrimePowersProduct = primeDictNew[n].Aggregate(
 								1, (long acc, KeyValuePair<long, long> val) =>
-									acc * Power(val.Key, val.Value));
+									acc * IntPower(val.Key, val.Value));
 							if (currentPrimePowersProduct == n)
 							{
 								// the current prime product is already finished for this number
@@ -112,7 +112,6 @@ namespace PrimeFactors
 			if (timeNew - timeCurrent > 0)
 			{
 				Console.WriteLine($"The current method is {timeNew - timeCurrent} ms faster");
-				Console.WriteLine("Not really surprising tbh");
 			}
 			else if (timeNew - timeCurrent < 0)
 			{
@@ -129,7 +128,7 @@ namespace PrimeFactors
 			}
 		}
 
-		static private long Power(long x, long n)
+		static private long IntPower(long x, long n)
 		{
 			var result = 1L;
 			while (n > 0)
