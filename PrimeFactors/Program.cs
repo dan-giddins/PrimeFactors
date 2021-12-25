@@ -81,8 +81,7 @@ namespace PrimeFactors
 					{
 						// sequence for this potBase and power
 						// how and why is `+ extender * Power(potBase, pow)` needed here?!
-						for (
-							var n = IntPower(potBase, pow) + extender * IntPower(potBase, pow);
+						for (var n = IntPower(potBase, pow) + extender * IntPower(potBase, pow);
 							n < Range;
 							n += IntPower(potBase, pow + 1))
 						{
