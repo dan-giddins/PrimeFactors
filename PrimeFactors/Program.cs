@@ -7,7 +7,7 @@ namespace PrimeFactors
 	internal class Program
 	{
 		static private System.Diagnostics.Stopwatch Watch;
-		private const long Range = 1000;
+		private const long Range = 100000;
 
 		static private void Main()
 		{
@@ -62,30 +62,30 @@ namespace PrimeFactors
 				primeDictNew.Add(n, new Dictionary<long, long>());
 			}
 			// loop through potential bases (all numbers > 1)
-			for (var potBase = 2; potBase < Range; potBase++)
+			for (var @base = 2; @base < Range; @base++)
 			{
-				if (primeDictNew[potBase].Any())
+				if (primeDictNew[@base].Any())
 				{
-					// if the numeric value of potBase already has factors
-					// potBase cannot be prime
+					// if the numeric value of @base already has factors
+					// @base cannot be prime
 					// all primes have only one prime factor of themself
-					// as potBase is not prime, it cannot be a base
+					// as @base is not prime, it cannot be a base
 					continue;
 				}
-				// loop through the possible powers for said potBase
-				for (var pow = 1; IntPower(potBase, pow) < Range; pow++)
+				// loop through the possible powers for said @base
+				for (var pow = 1; IntPower(@base, pow) < Range; pow++)
 				{
-					// sequence extender thingy (based on potBase)
+					// sequence extender thingy (based on @base)
 					// this is some kind of dark magic that I do not understand
-					for (var extender = 0; extender < potBase - 1; extender++)
+					for (var extender = 0; extender < @base - 1; extender++)
 					{
-						// sequence for this potBase and power
-						// how and why is `+ extender * Power(potBase, pow)` needed here?!
-						for (var n = IntPower(potBase, pow) + extender * IntPower(potBase, pow);
+						// sequence for this @base and power
+						// how and why is `+ extender * Power(@base, pow)` needed here?!
+						for (var n = IntPower(@base, pow) + extender * IntPower(@base, pow);
 							n < Range;
-							n += IntPower(potBase, pow + 1))
+							n += IntPower(@base, pow + 1))
 						{
-							primeDictNew[n].Add(potBase, pow);
+							primeDictNew[n].Add(@base, pow);
 						}
 					}
 				}
@@ -101,7 +101,7 @@ namespace PrimeFactors
 			}
 			else if (timeNew - timeCurrent < 0)
 			{
-				Console.WriteLine($"The NEW method is {timeCurrent - timeNew} ms faster!!!");
+				Console.WriteLine($"The new method is {timeCurrent - timeNew} ms faster!!!");
 				Console.WriteLine("You should probably celebrate!");
 			}
 		}
