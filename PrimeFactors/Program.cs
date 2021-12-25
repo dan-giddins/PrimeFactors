@@ -6,7 +6,7 @@ namespace PrimeFactors
 {
 	class Program
 	{
-		private const int Range = 100000;
+		private const long Range = 10000;
 		private static System.Diagnostics.Stopwatch Watch;
 
 		static void Main()
@@ -14,10 +14,10 @@ namespace PrimeFactors
 			// current method
 			Watch = System.Diagnostics.Stopwatch.StartNew();
 			// number, prime, power
-			var primeDictCurrent = new Dictionary<int, Dictionary<int, int>>();
+			var primeDictCurrent = new Dictionary<long, Dictionary<long, long>>();
 			for (var n = 2; n < Range; n++)
 			{
-				var primeFactors = new List<int>();
+				var primeFactors = new List<long>();
 				var p = 2;
 				var m = n;
 				while (m >= p * p)
@@ -34,11 +34,11 @@ namespace PrimeFactors
 				}
 				primeFactors.Add(m);
 				primeDictCurrent.Add(n, primeFactors.GroupBy(x => x)
-					.Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+					.Select(x => new KeyValuePair<long, long>(x.Key, x.Count()))
 					.ToDictionary(x => x.Key, x => x.Value));
 			}
 			Watch.Stop();
-			//PrintPrimeDict(primeDictCurrent);
+			//PrlongPrimeDict(primeDictCurrent);
 			Console.WriteLine($"For a range of {Range}:");
 			var timeCurrent = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The current method took {timeCurrent} ms");
@@ -46,10 +46,10 @@ namespace PrimeFactors
 			// fast? method
 			Watch = System.Diagnostics.Stopwatch.StartNew();
 			// number, prime, power
-			var primeDictFast = new Dictionary<int, Dictionary<int, int>>();
+			var primeDictFast = new Dictionary<long, Dictionary<long, long>>();
 			for (var n = 2; n < Range; n++)
 			{
-				primeDictFast.Add(n, new Dictionary<int, int>());
+				primeDictFast.Add(n, new Dictionary<long, long>());
 			}
 			// loop through potential primes
 			for (var potPrime = 2; potPrime < Range; potPrime++)
@@ -63,13 +63,13 @@ namespace PrimeFactors
 					{
 						// sequence
 						for (
-							var n = (int)Math.Pow(potPrime, pow) + loop * (int)Math.Pow(potPrime, pow);
+							var n = (long)Math.Pow(potPrime, pow) + loop * (long)Math.Pow(potPrime, pow);
 							isPrime && n < Range;
-							n += (int)Math.Pow(potPrime, pow + 1))
+							n += (long)Math.Pow(potPrime, pow + 1))
 						{
 							// is prime?
-							if (primeDictFast[n].Aggregate(1, (acc, val) =>
-								acc * (int)Math.Pow(val.Key, val.Value)) < n)
+							if (primeDictFast[n].Aggregate(1, (long acc, KeyValuePair<long, long> val) =>
+								acc * (long)Math.Pow(val.Key, val.Value)) < n)
 							{
 								primeDictFast[n].Add(potPrime, pow);
 							}
@@ -83,13 +83,13 @@ namespace PrimeFactors
 				}
 			}
 			Watch.Stop();
-			//PrintPrimeDict(primeDictFast);
+			//PrlongPrimeDict(primeDictFast);
 			var timeFast = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The fast method took {timeFast} ms");
 			Console.WriteLine($"The fast method is {timeCurrent - timeFast} ms faster!");
 		}
 
-		private static void PrintPrimeDict(Dictionary<int, Dictionary<int, int>> primeDict)
+		private static void PrlongPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
 		{
 			for (var n = 2; n < Range; n++)
 			{
