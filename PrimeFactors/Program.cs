@@ -7,7 +7,7 @@ namespace PrimeFactors
 	internal class Program
 	{
 		static private System.Diagnostics.Stopwatch Watch;
-		private const long Range = 100000;
+		private const long Range = 1000;
 
 		static private void Main()
 		{
@@ -86,7 +86,6 @@ namespace PrimeFactors
 							n < Range;
 							n += IntPower(potBase, pow + 1))
 						{
-							// currentPrimePowersProduct < n
 							primeDictNew[n].Add(potBase, pow);
 						}
 					}
