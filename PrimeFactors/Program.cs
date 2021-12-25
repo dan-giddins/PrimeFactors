@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace PrimeFactors
 {
-	class Program
+	internal class Program
 	{
-		private static System.Diagnostics.Stopwatch Watch;
-		private const long Range = 100000;
+		static private System.Diagnostics.Stopwatch Watch;
+		private const long Range = 1000;
 
-		static void Main()
+		static private void Main()
 		{
 			// current method
 			Watch = System.Diagnostics.Stopwatch.StartNew();
@@ -121,14 +121,15 @@ namespace PrimeFactors
 			}
 		}
 
-		private static void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
+		static private void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
 		{
 			for (var n = 2; n < Range; n++)
 			{
 				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
 		}
-		private static long Power(long x, long n)
+
+		static private long Power(long x, long n)
 		{
 			var result = 1L;
 			while (n > 0)
