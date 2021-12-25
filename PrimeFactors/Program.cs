@@ -6,8 +6,8 @@ namespace PrimeFactors
 {
 	class Program
 	{
-		private const long Range = 10000;
 		private static System.Diagnostics.Stopwatch Watch;
+		private const long Range = 100000;
 
 		static void Main()
 		{
@@ -38,40 +38,40 @@ namespace PrimeFactors
 					.ToDictionary(x => x.Key, x => x.Value));
 			}
 			Watch.Stop();
-			//PrlongPrimeDict(primeDictCurrent);
+			//PrintPrimeDict(primeDictCurrent);
 			Console.WriteLine($"For a range of {Range}:");
 			var timeCurrent = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The current method took {timeCurrent} ms");
 
-			// fast? method
+			// new method
 			Watch = System.Diagnostics.Stopwatch.StartNew();
 			// number, prime, power
-			var primeDictFast = new Dictionary<long, Dictionary<long, long>>();
+			var primeDictNew = new Dictionary<long, Dictionary<long, long>>();
 			for (var n = 2; n < Range; n++)
 			{
-				primeDictFast.Add(n, new Dictionary<long, long>());
+				primeDictNew.Add(n, new Dictionary<long, long>());
 			}
 			// loop through potential primes
 			for (var potPrime = 2; potPrime < Range; potPrime++)
 			{
 				var isPrime = true;
 				// loop through the possible powers for said potPrime
-				for (var pow = 1; isPrime && pow < Math.Log(Range, potPrime); pow++)
+				for (var pow = 1; isPrime && Power(potPrime, pow) < Range; pow++)
 				{
-					// sequence modifer thing(based on potPrime)
+					// sequence modifer thing (based on potPrime)
 					for (var loop = 0; isPrime && loop < potPrime - 1; loop++)
 					{
 						// sequence
 						for (
-							var n = (long)Math.Pow(potPrime, pow) + loop * (long)Math.Pow(potPrime, pow);
+							var n = Power(potPrime, pow) + loop * Power(potPrime, pow);
 							isPrime && n < Range;
-							n += (long)Math.Pow(potPrime, pow + 1))
+							n += Power(potPrime, pow + 1))
 						{
 							// is prime?
-							if (primeDictFast[n].Aggregate(1, (long acc, KeyValuePair<long, long> val) =>
-								acc * (long)Math.Pow(val.Key, val.Value)) < n)
+							if (primeDictNew[n].Aggregate(1, (long acc, KeyValuePair<long, long> val) =>
+								acc * Power(val.Key, val.Value)) < n)
 							{
-								primeDictFast[n].Add(potPrime, pow);
+								primeDictNew[n].Add(potPrime, pow);
 							}
 							else
 							{
@@ -83,18 +83,36 @@ namespace PrimeFactors
 				}
 			}
 			Watch.Stop();
-			//PrlongPrimeDict(primeDictFast);
-			var timeFast = Watch.ElapsedMilliseconds;
-			Console.WriteLine($"The fast method took {timeFast} ms");
-			Console.WriteLine($"The fast method is {timeCurrent - timeFast} ms faster!");
+			//PrintPrimeDict(primeDictFast);
+			var timeNew = Watch.ElapsedMilliseconds;
+			Console.WriteLine($"The new method took {timeNew} ms");
+			Console.WriteLine($"The current method is {timeNew - timeCurrent} ms faster!");
 		}
 
-		private static void PrlongPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
+		private static void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
 		{
 			for (var n = 2; n < Range; n++)
 			{
 				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
+		}
+		private static long Power(long x, long n)
+		{
+			var result = 1L;
+			while (n > 0)
+			{
+				if ((n & 1) == 0)
+				{
+					x *= x;
+					n >>= 1;
+				}
+				else
+				{
+					result *= x;
+					--n;
+				}
+			}
+			return result;
 		}
 	}
 }
