@@ -7,7 +7,7 @@ namespace PrimeFactors
 	internal class Program
 	{
 		static private System.Diagnostics.Stopwatch Watch;
-		private const long Range = 1000;
+		private const long Range = 100000;
 
 		static private void Main()
 		{
@@ -48,7 +48,7 @@ namespace PrimeFactors
 					.ToDictionary(x => x.Key, x => x.Value));
 			}
 			Watch.Stop();
-			PrintPrimeDict(primeDictCurrent);
+			//PrintPrimeDict(primeDictCurrent);
 			Console.WriteLine($"For a range of {Range}:");
 			var timeCurrent = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The current method took {timeCurrent} ms");
@@ -99,7 +99,7 @@ namespace PrimeFactors
 
 			if (timeNew - timeCurrent > 0)
 			{
-				Console.WriteLine($"The current method is {timeNew - timeCurrent} ms faster");
+				Console.WriteLine($"The new method is {timeNew - timeCurrent} ms slower");
 			}
 			else if (timeNew - timeCurrent < 0)
 			{
