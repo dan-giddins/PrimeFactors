@@ -70,43 +70,42 @@ namespace PrimeFactors
 				{
 					// sequence extender thingy (based on potPrime)
 					// this is some kind of dark magic that I do not understand
-					// it does work though
+					// it does work though (just like dark magic)
 					for (var extender = 0; isPrime && extender < potPrime - 1; extender++)
 					{
 						// sequence for this potPrime and power
-						// why does loop * Power(potPrime, pow) even work?!
+						// how and why is `+ extender * Power(potPrime, pow)` needed here?!
 						for (
 							var n = Power(potPrime, pow) + extender * Power(potPrime, pow);
 							isPrime && n < Range;
 							n += Power(potPrime, pow + 1))
 						{
-							// is potPrime actully prime?
+							// check if potPrime is actully not prime
 							var currentPrimePowersProduct = primeDictNew[n].Aggregate(
 								1, (long acc, KeyValuePair<long, long> val) =>
 									acc * Power(val.Key, val.Value));
-							if (currentPrimePowersProduct < n)
+							if (currentPrimePowersProduct == n)
 							{
-								primeDictNew[n].Add(potPrime, pow);
-							}
-							else
-							{
-								// if currentPrimePowersProduct >= n
-								// (although I belive this is only hit in the == n state)
 								// the current prime product is already finished for this number
 								// therefor current number cannot be a prime product
 								// therefor cannot be prime itself
 								// set isPrime to false to exit out all loops and move to the next potential prime
 								// (by the time we get to testing a non-prime number
 								// all the factors of that number should have already been discovered
-								// so this will exit on the first time seeing this number)
+								// so this will exit on the first time seeing this non-prime)
 								isPrime = false;
+							}
+							else
+							{
+								// currentPrimePowersProduct < n
+								primeDictNew[n].Add(potPrime, pow);
 							}
 						}
 					}
 				}
 			}
 			Watch.Stop();
-			//PrintPrimeDict(primeDictFast);
+			PrintPrimeDict(primeDictNew);
 			var timeNew = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The new method took {timeNew} ms");
 
