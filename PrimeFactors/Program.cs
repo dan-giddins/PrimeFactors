@@ -22,13 +22,22 @@ namespace PrimeFactors
 				var m = n;
 				while (m >= p * p)
 				{
+					// if p is not prime there will be some p' where:
+					// p' is prime,
+					// p' < p,
+					// and p % p' == 0 (i.e p' is a prime factor of p)
+					// as p' < p, this p' will have already been factorised out of m
+					// therefor m cannot contain p as a factor
 					if (m % p == 0)
 					{
+						// p is a factor
 						primeFactors.Add(p);
+						// set m to be the remaing part of the number that needs factorising
 						m /= p;
 					}
 					else
 					{
+						// try dividing m by a number one greater
 						p++;
 					}
 				}
@@ -51,31 +60,45 @@ namespace PrimeFactors
 			{
 				primeDictNew.Add(n, new Dictionary<long, long>());
 			}
-			// loop through potential primes
+			// loop through potential primes (all numbers > 1)
 			for (var potPrime = 2; potPrime < Range; potPrime++)
 			{
+				// assume number is prime
 				var isPrime = true;
 				// loop through the possible powers for said potPrime
 				for (var pow = 1; isPrime && Power(potPrime, pow) < Range; pow++)
 				{
-					// sequence modifer thing (based on potPrime)
-					for (var loop = 0; isPrime && loop < potPrime - 1; loop++)
+					// sequence extender thingy (based on potPrime)
+					// this is some kind of dark magic that I do not understand
+					// it does work though
+					for (var extender = 0; isPrime && extender < potPrime - 1; extender++)
 					{
-						// sequence
+						// sequence for this potPrime and power
+						// why does loop * Power(potPrime, pow) even work?!
 						for (
-							var n = Power(potPrime, pow) + loop * Power(potPrime, pow);
+							var n = Power(potPrime, pow) + extender * Power(potPrime, pow);
 							isPrime && n < Range;
 							n += Power(potPrime, pow + 1))
 						{
-							// is prime?
-							if (primeDictNew[n].Aggregate(1, (long acc, KeyValuePair<long, long> val) =>
-								acc * Power(val.Key, val.Value)) < n)
+							// is potPrime actully prime?
+							var currentPrimePowersProduct = primeDictNew[n].Aggregate(
+								1, (long acc, KeyValuePair<long, long> val) =>
+									acc * Power(val.Key, val.Value));
+							if (currentPrimePowersProduct < n)
 							{
 								primeDictNew[n].Add(potPrime, pow);
 							}
 							else
 							{
-								// current number is not prime
+								// if currentPrimePowersProduct >= n
+								// (although I belive this is only hit in the == n state)
+								// the current prime product is already finished for this number
+								// therefor current number cannot be a prime product
+								// therefor cannot be prime itself
+								// set isPrime to false to exit out all loops and move to the next potential prime
+								// (by the time we get to testing a non-prime number
+								// all the factors of that number should have already been discovered
+								// so this will exit on the first time seeing this number)
 								isPrime = false;
 							}
 						}
@@ -86,7 +109,17 @@ namespace PrimeFactors
 			//PrintPrimeDict(primeDictFast);
 			var timeNew = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The new method took {timeNew} ms");
-			Console.WriteLine($"The current method is {timeNew - timeCurrent} ms faster!");
+
+			if (timeNew - timeCurrent > 0)
+			{
+				Console.WriteLine($"The current method is {timeNew - timeCurrent} ms faster");
+				Console.WriteLine("Not really surprising tbh");
+			}
+			else if (timeNew - timeCurrent < 0)
+			{
+				Console.WriteLine($"The NEW method is {timeCurrent - timeNew} ms faster!!!");
+				Console.WriteLine("You should probably celebrate!");
+			}
 		}
 
 		private static void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
