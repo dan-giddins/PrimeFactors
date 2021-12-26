@@ -11,48 +11,36 @@ namespace PrimeFactors
 
 		static private void Main()
 		{
-			// current method
-			Watch = System.Diagnostics.Stopwatch.StartNew();
-			// number, prime, power
-			var primeDictCurrent = new Dictionary<long, Dictionary<long, long>>();
+			//Console.WriteLine($"For a range of {Range}:");
+			var (timeCurrent, primeDictCurrent) = CurrentPrimes();
+			//WritePrimesTableCSV();
+			var (timeNew, primeDictNew) = NewPrimes();
+			PrintTimeDiff(timeCurrent, timeNew);
+		}
+
+		static private void WritePrimesTableCSV(Dictionary<long, Dictionary<long, long>> primeDict)
+		{
 			for (var n = 2; n < Range; n++)
 			{
-				var primeFactors = new List<long>();
-				var p = 2;
-				var m = n;
-				while (m >= p * p)
-				{
-					// if p is not prime there will be some p' where:
-					// p' is prime,
-					// p' < p,
-					// and p % p' == 0 (i.e p' is a prime factor of p)
-					// as p' < p, this p' will have already been factorised out of m
-					// therefor m cannot contain p as a factor
-					if (m % p == 0)
-					{
-						// p is a factor
-						primeFactors.Add(p);
-						// set m to be the remaing part of the number that needs factorising
-						m /= p;
-					}
-					else
-					{
-						// try dividing m by a number one greater
-						p++;
-					}
-				}
-				primeFactors.Add(m);
-				// group, count and project the list of primes for this into a dictory of <key = base, power>
-				primeDictCurrent.Add(n, primeFactors.GroupBy(x => x)
-					.Select(x => new KeyValuePair<long, long>(x.Key, x.Count()))
-					.ToDictionary(x => x.Key, x => x.Value));
+				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
-			Watch.Stop();
-			//PrintPrimeDict(primeDictCurrent);
-			Console.WriteLine($"For a range of {Range}:");
-			var timeCurrent = Watch.ElapsedMilliseconds;
-			Console.WriteLine($"The current method took {timeCurrent} ms");
+		}
 
+		static private void PrintTimeDiff(long timeCurrent, long timeNew)
+		{
+			if (timeNew - timeCurrent > 0)
+			{
+				Console.WriteLine($"The new method is {timeNew - timeCurrent} ms slower");
+			}
+			else if (timeNew - timeCurrent < 0)
+			{
+				Console.WriteLine($"The new method is {timeCurrent - timeNew} ms faster!!!");
+				Console.WriteLine("You should probably celebrate!");
+			}
+		}
+
+		static private (long, Dictionary<long, Dictionary<long, long>>) NewPrimes()
+		{
 			// new method
 			Watch = System.Diagnostics.Stopwatch.StartNew();
 			// number, prime, power
@@ -91,19 +79,56 @@ namespace PrimeFactors
 				}
 			}
 			Watch.Stop();
-			//PrintPrimeDict(primeDictNew);
+			PrintPrimeDict(primeDictNew);
 			var timeNew = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The new method took {timeNew} ms");
+			return (timeNew, primeDictNew);
+		}
 
-			if (timeNew - timeCurrent > 0)
+		static private (long, Dictionary<long, Dictionary<long, long>>) CurrentPrimes()
+		{
+			// current method
+			Watch = System.Diagnostics.Stopwatch.StartNew();
+			// number, prime, power
+			var primeDictCurrent = new Dictionary<long, Dictionary<long, long>>();
+			for (var n = 2; n < Range; n++)
 			{
-				Console.WriteLine($"The new method is {timeNew - timeCurrent} ms slower");
+				var primeFactors = new List<long>();
+				var p = 2;
+				var m = n;
+				while (m >= p * p)
+				{
+					// if p is not prime there will be some p' where:
+					// p' is prime,
+					// p' < p,
+					// and p % p' == 0 (i.e p' is a prime factor of p)
+					// as p' < p, this p' will have already been factorised out of m
+					// therefor m cannot contain p as a factor
+					if (m % p == 0)
+					{
+						// p is a factor
+						primeFactors.Add(p);
+						// set m to be the remaing part of the number that needs factorising
+						m /= p;
+					}
+					else
+					{
+						// try dividing m by a number one greater
+						p++;
+					}
+				}
+				primeFactors.Add(m);
+				// group, count and project the list of primes for this into a dictory of <key = base, power>
+				primeDictCurrent.Add(n, primeFactors.GroupBy(x => x)
+					.Select(x => new KeyValuePair<long, long>(x.Key, x.Count()))
+					.ToDictionary(x => x.Key, x => x.Value));
 			}
-			else if (timeNew - timeCurrent < 0)
-			{
-				Console.WriteLine($"The new method is {timeCurrent - timeNew} ms faster!!!");
-				Console.WriteLine("You should probably celebrate!");
-			}
+			Watch.Stop();
+			//PrintPrimeDict(primeDictCurrent);
+
+			var timeCurrent = Watch.ElapsedMilliseconds;
+			Console.WriteLine($"The current method took {timeCurrent} ms");
+			return (timeCurrent, primeDictCurrent);
 		}
 
 		static private void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
