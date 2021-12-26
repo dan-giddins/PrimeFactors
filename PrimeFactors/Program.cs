@@ -7,7 +7,7 @@ namespace PrimeFactors
 	internal class Program
 	{
 		static private System.Diagnostics.Stopwatch Watch;
-		private const long Range = 100000;
+		private const long Range = 10;
 
 		static private void Main()
 		{
@@ -45,23 +45,29 @@ namespace PrimeFactors
 			Watch = System.Diagnostics.Stopwatch.StartNew();
 			// number, prime, power
 			var primeDictNew = new Dictionary<long, Dictionary<long, long>>();
-			for (var n = 2; n < Range; n++)
+			for (var n = 1; n < Range; n++)
 			{
 				primeDictNew.Add(n, new Dictionary<long, long>());
 			}
 			// loop through potential bases (all numbers > 1)
 			for (var @base = 2; @base < Range; @base++)
 			{
-				if (primeDictNew[@base].Any())
+				// check if base is actully not prime
+				var currentPrimePowersProduct = primeDictNew[@base].Aggregate(
+					1, (long acc, KeyValuePair<long, long> val) =>
+						acc * IntPower(val.Key, val.Value));
+				if (currentPrimePowersProduct == @base)
 				{
-					// if the numeric value of @base already has factors
-					// @base cannot be prime
-					// all primes have only one prime factor of themself
-					// as @base is not prime, it cannot be a base
+					// the current prime product is already finished for this number
+					// therefor current base cannot be part of this prime product
+					// therefor current base also cannot be prime itself
+					// (by the time we get to testing a non-prime number
+					// all the factors of that number should have already been discovered
+					// so this will exit on the first time seeing this non-prime)
 					continue;
 				}
 				// loop through the possible powers for said @base
-				for (var pow = 1; IntPower(@base, pow) < Range; pow++)
+				for (var pow = 0; IntPower(@base, pow) < Range; pow++)
 				{
 					// sequence extender thingy (based on @base)
 					// this is some kind of dark magic that I do not understand
@@ -133,7 +139,7 @@ namespace PrimeFactors
 
 		static private void PrintPrimeDict(Dictionary<long, Dictionary<long, long>> primeDict)
 		{
-			for (var n = 2; n < Range; n++)
+			for (var n = 1; n < Range; n++)
 			{
 				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
 			}
