@@ -16,8 +16,24 @@ namespace PrimeFactors
 			//Console.WriteLine($"For a range of {Range}:");
 			var (timeCurrent, primeDictCurrent) = CurrentPrimes();
 			var (timeNew, primeDictNew) = NewPrimes();
+			PrintPowerPosSum(primeDictNew);
 			WritePrimesTableCSV(primeDictNew);
 			PrintTimeDiff(timeCurrent, timeNew);
+		}
+
+		static private void PrintPowerPosSum(Dictionary<long, Dictionary<long, long>> primeDictNew)
+		{
+			for (var n = 1; n < Range; n++)
+			{
+				var counter = 0L;
+				var sum = 0L;
+				foreach (var factor in primeDictNew[n])
+				{
+					counter++;
+					sum += counter * factor.Value;
+				}
+				Console.WriteLine($"{n} = {sum}");
+			}
 		}
 
 		static private void WritePrimesTableCSV(Dictionary<long, Dictionary<long, long>> primeDict)
