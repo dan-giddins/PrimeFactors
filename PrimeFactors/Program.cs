@@ -110,7 +110,7 @@ namespace PrimeFactors
 				}
 			}
 			Watch.Stop();
-			PrintPrimeDict(primeDictNew);
+			//PrintPrimeDict(primeDictNew);
 			var timeNew = Watch.ElapsedMilliseconds;
 			Console.WriteLine($"The new method took {timeNew} ms");
 			return (timeNew, primeDictNew);
