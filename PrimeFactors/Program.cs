@@ -1,28 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using OfficeOpenXml;
 
 namespace PrimeFactors
 {
 	internal class Program
 	{
 		static private System.Diagnostics.Stopwatch Watch;
-		private const long Range = 10;
+		private const long Range = 100;
 
 		static private void Main()
 		{
 			//Console.WriteLine($"For a range of {Range}:");
 			var (timeCurrent, primeDictCurrent) = CurrentPrimes();
-			//WritePrimesTableCSV();
 			var (timeNew, primeDictNew) = NewPrimes();
+			WritePrimesTableCSV(primeDictNew);
 			PrintTimeDiff(timeCurrent, timeNew);
 		}
 
 		static private void WritePrimesTableCSV(Dictionary<long, Dictionary<long, long>> primeDict)
 		{
-			for (var n = 2; n < Range; n++)
+			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+			using (var package = new ExcelPackage())
 			{
-				Console.WriteLine($"{n} = {string.Join(" * ", primeDict[n].Select(x => $"{x.Key}^{x.Value}"))}");
+				var worksheet = package.Workbook.Worksheets.Add("Primes");
+				var headingCol = 1;
+				worksheet.Cells[1, headingCol].Value = "Number";
+				worksheet.Cells[1, headingCol].Style.Font.Bold = true;
+				foreach (var factor in primeDict[1].Reverse())
+				{
+					headingCol++;
+					worksheet.Cells[1, headingCol].Value = factor.Key;
+					worksheet.Cells[1, headingCol].Style.Font.Bold = true;
+				}
+				var row = 1;
+				foreach (var n in primeDict)
+				{
+					row++;
+					var bodyCol = 1;
+					worksheet.Cells[row, bodyCol].Value = n.Key;
+					foreach (var factor in n.Value.Reverse())
+					{
+						bodyCol++;
+						worksheet.Cells[row, bodyCol].Value = factor.Value;
+					}
+				}
+				package.SaveAs(new FileInfo("primes.xlsx"));
 			}
 		}
 
